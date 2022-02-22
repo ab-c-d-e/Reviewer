@@ -17,24 +17,21 @@ namespace Reviewer.Models
         [MaxLength(50)]
         public string Title { get; set; }
 
-        [Required]
-        [MaxLength(50)]
-        public string Author { get; set; }
-
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{MMMM dd yyyy}", ApplyFormatInEditMode = true)]
-        public DateTime DateOfPublishing { get; set; }
+        public DateTime Date{ get; set; }
 
-        public string ImageUrl { get; set; }
+        public string Url { get; set; }
 
         [MaxLength(400)]
         public string Description { get; set; }
+        public double Avrage { get; set; }
+        public double AvrageCritic { get; set; }
+         public double AvrageRegular { get; set; }
 
-        public virtual List<Review> Reviews { get; set; }
+        public Author Author { get; set; }
 
-        public double AvrageGrade { get; set; }
+        public List<GenreObject> Genres { get; set; }
 
-        [JsonIgnore]
-        public Reviewers Reviewer { get; set; }
+        public List<Review> Reviews { get; set; }
     }
 }

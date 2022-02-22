@@ -12,6 +12,12 @@ namespace Reviewer.Models
 
         public DbSet<Reviewers> Reviewers { get; set; }
 
+        public DbSet<Genre> Genres { get; set; }
+
+        public DbSet<Author> Authors { get; set; }
+
+        public DbSet<GenreObject> GenreObjects { get; set; }
+
         public ReviewerContext(DbContextOptions options) : base(options)
         {
         }

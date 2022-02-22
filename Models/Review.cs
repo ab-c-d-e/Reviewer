@@ -14,11 +14,13 @@ namespace Reviewer.Models
         public int Grade { get; set; }
 
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{MMMM dd yyyy}", ApplyFormatInEditMode = true)]
-        public DateTime DateOfAdding { get; set; }
+        public DateTime Date { get; set; }
 
-        [MaxLength(1000)]
-        public string BodyOfReview { get; set; }
+        [MaxLength(500)]
+        public string Text { get; set; }
+
+        public bool Spoiler { get; set; }
+        
         [JsonIgnore]
         public User User { get; set; }
         public ReviewedObject Object { get; set; }
