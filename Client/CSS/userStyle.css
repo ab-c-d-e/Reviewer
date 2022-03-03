@@ -1,0 +1,287 @@
+:root {
+    --d : 100%;
+  }
+
+*{
+    margin: 0;
+}
+.heroUser{
+    display: flex;
+    flex-wrap: wrap;
+    background: linear-gradient(-45deg, #ee76523f, hsla(245, 76%, 16%, 0.432), #23a5d546, #fcff5b5b);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+}
+input[type=file]::file-selector-button{
+    border-radius: 15px;
+    
+    background-color: transparent;
+    border: 1px solid #000000;
+    color: #000000;
+}
+input[type=file]::file-selector-button:hover{
+    background-color: #00000059;
+}
+.formEditUser{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 20px;
+}
+
+.heroUsersLeft,.heroUsersRight{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 50%;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.divCritic, .divMale, .divFemale{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fromForAdding{
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(255, 255, 255, 0.185);
+    padding: 70px;
+}
+
+.nameUser{
+    color:#150c74;
+}
+
+.imageUser{
+    height: 400px;
+    width: 300px;
+    margin: 20px;
+    border: 2px solid #150c74;
+
+}
+
+.fromForAdding input{
+    margin: 10px;
+    font-size: 15px;
+}
+::placeholder{
+    color: black;
+}
+.formCritic, .formRegular, .formSearch {
+    width: 60%;
+    display: flex;
+    margin: 20px;
+    color: black;
+}
+
+.formSearch{
+    border: 1px solid black;
+    border-radius: 15px;
+}
+.formCritic input, .formRegular input{
+    
+    font-size: 30px;
+    width: 100%;
+    border-radius: 15px;
+    text-transform: uppercase;
+    background-color: rgba(0, 0, 0, 0.644);
+    color: white;
+    border:none;
+}
+.fromForAdding input{
+    border-radius: 15px;
+    border: none;
+    height: 30px;
+    padding:2px;
+    
+}
+
+.divContainerRight{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.formCritic input:hover, .formRegular input:hover{
+    
+    background-color: black;
+}
+
+.formSearch input{
+    width: calc(100% - 50px);
+    background-color: transparent;
+    border: none;
+    font-size: 30px;
+}
+.formSearch input[type=submit]{
+    background-color: transparent;
+    border: none;
+    font-size: 30px;
+    width: 50px;
+}
+
+.addUserButton{
+    width:60%;
+    font-size: 30px;
+    margin: 20px;
+    border-radius: 15px;
+    background-color: rgba(0, 0, 0, 0.644);
+    border:none;
+    color: white;
+}
+
+.addUserButton:hover{
+    background-color: black;
+}
+
+.heroTopTen{
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.containerUser{
+    display: flex;
+    margin: 10px;
+    font-size: 30px;
+    justify-content: space-around;
+    border: 2px solid #150c74;
+    color: #150c74;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.labelCritic, .labelRadioFemale, .labelRadioMale
+{
+    font-size: 20px;
+    text-transform: bold;
+    margin: 10px;
+}
+
+.containerStatistic{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+
+.gradeContainer{
+    width: 400px;
+    height: 40px;
+    margin: 10px;
+    display: flex;
+    font-size: 20px;
+    background-color: #0000002c;
+    border-radius: 15px;
+    text-align: center;
+}
+.filled{
+    height: 93%;
+    width: var(--d);
+    background-color: #150c74;
+    color: white;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    border:1px solid #150c74;
+    border-radius: 15px;
+    padding-left:10px;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.deleteUser, .updateUser{
+    background-color: transparent;
+    margin: 2px;
+    border-radius: 15px;
+    height: 45px;
+    font-size: 30px;
+    border: none;
+}
+
+.deleteUser:hover, .updateUser:hover{
+    background-color:#150c7444;
+}
+
+.updateButtonFinal{
+    border:2px solid #150c74;
+    background-color: transparent;
+    color: #150c74;
+}
+
+.updateButtonFinal:hover{
+    background-color: #150c74;
+}
+
+
+.formEditUser input{
+    border: 2px solid #150c74;
+    margin:2px;
+}
+
+@media only screen and (max-width: 600px) 
+{
+    .formCritic, .formRegular, .formSearch {
+        width: 90%;
+    }
+
+    .heroUsersLeft{
+        width: 100%;
+        height: fit-content;
+    }
+    .addUserButton{
+        width: 90%;
+    }
+    .heroUsersRight{
+        width: 100%;
+        height: fit-content;
+    }
+
+    .containerUser{
+        flex-direction: column;
+        align-items: center;
+        background-color: transparent;
+        border: none;
+    }
+    .deleteUser, .updateUser{
+        width: 80%;
+        background-color: transparent;
+        margin: 2px;
+        border-radius: 15px;
+        border: none;
+    }
+
+    .fromForAdding{
+        justify-self: center;
+        margin: 20px;
+        background-color: rgba(255, 255, 255, 0.185);
+    }
+    .divContainerRight{
+       align-items: center;
+    }
+
+    .containerStatistic{
+        width: 80vw;
+    }
+    .gradeContainer{
+        width: 100%;
+    }
+
+}
+
+

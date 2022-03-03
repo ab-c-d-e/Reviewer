@@ -42,7 +42,7 @@ namespace Reviewer.Controllers
                     new
                     {
                         ID = pObject.ID,
-                        Type = pObject.Title,
+                        Title = pObject.Title,
                         Description=pObject.Description,
                         Avrage=pObject.Avrage,
                         AvrageCritic=pObject.AvrageCritic,

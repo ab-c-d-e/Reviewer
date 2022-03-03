@@ -92,180 +92,6 @@ namespace Reviewer.Controllers
             }
         }
 
-        [Route("GetObject/{ID}")]
-        [HttpGet]
-        public async Task<ActionResult> getObject(int ID)
-        {
-            try
-            {
-                var objectGet = Context.Objects
-                .Include(pObject=>pObject.Author)
-                .Where(pObject=>pObject.ID==ID);
-                if(objectGet==null)
-                {
-                    return BadRequest("Object Does Not Exist!");
-                }
-                return Ok
-                (
-                    await objectGet.Select(pObject =>
-                    new
-                    {
-                        ID = pObject.ID,
-                        Title = pObject.Title,
-                        Url = pObject.Url,
-                        Date=pObject.Date,
-                        Description = pObject.Description,
-                        Avrage = pObject.Avrage,
-                        AvrageRegular=pObject.AvrageRegular,
-                        AvrageCritic=pObject.AvrageCritic,
-                        Author=new
-                                {
-                                    ID = pObject.Author.ID,
-                                    Name= pObject.Author.Name,
-                                    LastName = pObject.Author.LastName,
-                                    Url= pObject.Author.Url
-                                }
-                    }).ToListAsync()
-                );
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-        [Route("GetObjectStats/{ID}")]
-        [HttpGet]
-        public async Task<ActionResult> getObjectStats(int ID)
-        {
-               try
-            {
-                if(!Context.Objects.Any(o => o.ID == ID))
-                {
-                    return BadRequest("Object Does Not Exist!");
-                }
-                var objectStat=await Context.Objects
-                    .Where(pObject=>pObject.ID==ID)
-                    .Include(pObject=>pObject.Reviews)
-                    .ThenInclude(pReviews=>pReviews.User)
-                    .ToListAsync();
-                return Ok
-                (
-                    
-                    objectStat.Select(pObject =>
-                    new
-                    {
-                        One=pObject.Reviews.Count(r=>r.Grade==1),
-                        Two=pObject.Reviews.Count(r=>r.Grade==2),
-                        Three=pObject.Reviews.Count(r=>r.Grade==3),
-                        Four=pObject.Reviews.Count(r=>r.Grade==4),
-                        Five=pObject.Reviews.Count(r=>r.Grade==5),
-                        Female=pObject.Reviews.Count(r=>r.User.Gender=='F'),
-                        Male=pObject.Reviews.Count(r=>r.User.Gender=='M'),
-                        Less20=pObject.Reviews.Count(r=>r.User.Age<=20),
-                        Between2040=pObject.Reviews.Count(r=>r.User.Age>20 && r.User.Age<=40),
-                        Between4060=pObject.Reviews.Count(r=>r.User.Age>40 && r.User.Age<=60),
-                        More60=pObject.Reviews.Count(r=>r.User.Age>60)
-                    }).ToList()
-                );
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-        [Route("GetObjectReviews/{ID}")]
-        [HttpGet]
-        public async Task<ActionResult> getObjectReviews(int ID)
-        {
-            try
-            {
-                if(!Context.Objects.Any(o => o.ID == ID))
-                {
-                    return BadRequest("Object Does Not Exist!");
-                }
-                return Ok
-                (
-                    await Context.Reviews
-                    .Where(pReview=>pReview.Object.ID==ID)
-                    .Select(pReview =>
-                    new
-                    {
-                        ID=pReview.ID,
-                        Spoiler=pReview.Spoiler,
-                        Text=pReview.Text,
-                        Grade=pReview.Grade,
-                        Date=pReview.Date
-
-                    }).ToListAsync()
-                );
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-        [Route("GetObjectGenres/{ID}")]
-        [HttpGet]
-        public async Task<ActionResult> getObjectGenres(int ID)
-        {
-            try
-            {
-                if(!Context.Objects.Any(o => o.ID == ID))
-                {
-                    return BadRequest("Object Does Not Exist!");
-                }
-                return Ok
-                (
-                   await  Context.GenreObjects
-                    .Where(pGenres=>pGenres.Object.ID==ID)
-                    .Select(pGenres =>
-                    new
-                    {
-                        ID=pGenres.Genre.ID,
-                        UrlGenre=pGenres.Genre.Url,
-                        TitleGenre=pGenres.Genre.Title
-                    }).ToListAsync()
-                );
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-        [Route("GetObjectSearch/{ID}")]
-        [HttpGet]
-        public async Task<ActionResult> getAllObjects(int ID, string search)
-        {
-            try
-            {
-                var objects = await Context.Objects.Where(pObj=>pObj.Author.Reviewer.ID==ID).Where(pObject=>pObject.Title.Contains(search)||search==null).ToListAsync();
-                return Ok(objects);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-        [Route("GetAllObjects/{ID}")]
-        [HttpGet]
-        public async Task<ActionResult> getAllObjects(int ID)
-        {
-            try
-            {
-                var objects = await Context.Objects.Where(pObj=>pObj.Author.Reviewer.ID==ID).ToListAsync();
-                return Ok(objects);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
         [Route("AddGenras/{ID}")]
         [HttpPut]
         public async Task<ActionResult> addGenras(int ID, [FromQuery] int []idGenre)
@@ -327,5 +153,309 @@ namespace Reviewer.Controllers
             }
         }
 
+        [Route("GetObject/{ID}")]
+        [HttpGet]
+        public async Task<ActionResult> getObject(int ID)
+        {
+            try
+            {
+                var objectGet = Context.Objects
+                .Include(pObject=>pObject.Author)
+                .Where(pObject=>pObject.ID==ID);
+                return Ok
+                (
+                    await objectGet.Select(pObject =>
+                    new
+                    {
+                        ID = pObject.ID,
+                        Title = pObject.Title,
+                        Url = pObject.Url,
+                        Date=pObject.Date,
+                        Description = pObject.Description,
+                        Avrage = pObject.Avrage,
+                        AvrageRegular=pObject.AvrageRegular,
+                        AvrageCritic=pObject.AvrageCritic,
+                        Author=new
+                                {
+                                    ID = pObject.Author.ID,
+                                    Name= pObject.Author.Name,
+                                    LastName = pObject.Author.LastName,
+                                    Url= pObject.Author.Url
+                                }
+                    }).ToListAsync()
+                );
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Route("GetObjectStats/{ID}")]
+        [HttpGet]
+        public async Task<ActionResult> getObjectStats(int ID)
+        {
+               try
+            {
+                if(!Context.Objects.Any(o => o.ID == ID))
+                {
+                    return BadRequest("Object Does Not Exist!");
+                }
+                var objectStat=await Context.Objects
+                    .Where(pObject=>pObject.ID==ID)
+                    .Include(pObject=>pObject.Reviews)
+                    .ThenInclude(pReviews=>pReviews.User)
+                    .ToListAsync();
+                return Ok
+                (
+                    
+                    objectStat.Select(pObject =>
+                    new
+                    {
+                        Count=pObject.Reviews.Count,
+                        One=pObject.Reviews.Count(r=>r.Grade==1),
+                        Two=pObject.Reviews.Count(r=>r.Grade==2),
+                        Three=pObject.Reviews.Count(r=>r.Grade==3),
+                        Four=pObject.Reviews.Count(r=>r.Grade==4),
+                        Five=pObject.Reviews.Count(r=>r.Grade==5),
+                        Female=pObject.Reviews.Count(r=>r.User.Gender=='F'),
+                        Male=pObject.Reviews.Count(r=>r.User.Gender=='M'),
+                        Less20=pObject.Reviews.Count(r=>r.User.Age<=20),
+                        Between2040=pObject.Reviews.Count(r=>r.User.Age>20 && r.User.Age<=40),
+                        Between4060=pObject.Reviews.Count(r=>r.User.Age>40 && r.User.Age<=60),
+                        More60=pObject.Reviews.Count(r=>r.User.Age>60)
+                    }).ToList()
+                );
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Route("GetObjectReviews/{ID}")]
+        [HttpGet]
+        public async Task<ActionResult> getObjectReviews(int ID)
+        {
+            try
+            {
+                if(!Context.Objects.Any(o => o.ID == ID))
+                {
+                    return BadRequest("Object Does Not Exist!");
+                }
+                return Ok
+                (
+                    await Context.Reviews
+                    .Where(pReview=>pReview.Object.ID==ID)
+                    .Include(pReview=>pReview.Object)
+                    .Select(pReview =>
+                    new
+                    {
+                        ID=pReview.ID,
+                        Spoiler=pReview.Spoiler,
+                        Text=pReview.Text,
+                        Grade=pReview.Grade,
+                        Date=pReview.Date,
+                        UserName=pReview.User.Name+" "+pReview.User.LastName,
+                        UserUrl=pReview.User.ImageUrl,
+                        Object=pReview.Object
+                    }).ToListAsync()
+                );
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Route("GetObjectGenres/{ID}")]
+        [HttpGet]
+        public async Task<ActionResult> getObjectGenres(int ID)
+        {
+            try
+            {
+                if(!Context.Objects.Any(o => o.ID == ID))
+                {
+                    return BadRequest("Object Does Not Exist!");
+                }
+                return Ok
+                (
+                   await  Context.GenreObjects
+                    .Where(pGenres=>pGenres.Object.ID==ID)
+                    .Select(pGenres =>
+                    new
+                    {
+                        ID=pGenres.Genre.ID,
+                        UrlGenre=pGenres.Genre.Url,
+                        TitleGenre=pGenres.Genre.Title
+                    }).ToListAsync()
+                );
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Route("GetObjectSearch/{ID}/{search}")]
+        [HttpGet]
+        public async Task<ActionResult> getAllObjects(int ID, string search)
+        {
+            try
+            {
+                var objects = await Context.Objects.Where(pObj=>pObj.Author.Reviewer.ID==ID).Where(pObject=>pObject.Title.Contains(search)||search==null).ToListAsync();
+                return Ok(objects);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Route("GetAllObjects/{ID}")]
+        [HttpGet]
+        public async Task<ActionResult> getAllObjects(int ID)
+        {
+            try
+            {
+                var objects = await Context.Objects.Where(pObj=>pObj.Author.Reviewer.ID==ID).ToListAsync();
+                return Ok(objects);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+
+        [Route("SortedReviewsDate/{ID}/{desc}")]
+        [HttpGet]
+        public async Task<ActionResult> sortedReviewsDate(int ID, bool desc)
+        {
+            try
+            {
+                if(!Context.Objects.Any(o => o.ID == ID))
+                {
+                    return BadRequest("Object Does Not Exist!");
+                }
+                var reviews=await Context.Reviews.Where(pRev=>pRev.Object.ID==ID)
+                .Include(pReview=>pReview.User)
+                .ToListAsync();
+
+                var sorted=(from r in reviews
+                orderby r.Date descending
+                select r).Take(reviews.Count());
+
+                if(desc==false)
+                {
+                    sorted=(from r in reviews
+                    orderby r.Date ascending
+                    select r).Take(reviews.Count());
+                }
+
+                return Ok
+                (
+                    sorted
+                    .Select(pReview =>
+                    new
+                    {
+                        ID=pReview.ID,
+                        Spoiler=pReview.Spoiler,
+                        Text=pReview.Text,
+                        Grade=pReview.Grade,
+                        Date=pReview.Date,
+                        UserName=pReview.User.Name+" "+pReview.User.LastName,
+                        UserUrl=pReview.User.ImageUrl
+
+                    }).ToList()
+                );
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Route("SortedReviewsGrade/{ID}/{desc}")]
+        [HttpGet]
+        public async Task<ActionResult> sortedReviewsGrade(int ID, bool desc)
+        {
+            try
+            {
+                if(!Context.Objects.Any(o => o.ID == ID))
+                {
+                    return BadRequest("Object Does Not Exist!");
+                }
+                var reviews=await Context.Reviews.Where(pRev=>pRev.Object.ID==ID)
+                .Include(pReview=>pReview.User)
+                .ToListAsync();
+
+                var sorted=(from r in reviews
+                orderby r.Grade descending
+                select r).Take(reviews.Count());
+
+                if(desc==false)
+                {
+                    sorted=(from r in reviews
+                    orderby r.Grade ascending
+                    select r).Take(reviews.Count());
+                }
+
+                return Ok
+                (
+                    sorted
+                    .Select(pReview =>
+                    new
+                    {
+                        ID=pReview.ID,
+                        Spoiler=pReview.Spoiler,
+                        Text=pReview.Text,
+                        Grade=pReview.Grade,
+                        Date=pReview.Date,
+                        UserName=pReview.User.Name+" "+pReview.User.LastName,
+                        UserUrl=pReview.User.ImageUrl
+
+                    }).ToList()
+                );
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Route("GetObjectReviewsGrade/{ID}/{Grade}")]
+        [HttpGet]
+        public async Task<ActionResult> getObjectReviews(int ID, int Grade)
+        {
+            try
+            {
+                if(!Context.Objects.Any(o => o.ID == ID))
+                {
+                    return BadRequest("User Does Not Exist!");
+                }
+                return Ok
+                (
+                    await Context.Reviews
+                    .Where(pReview=>pReview.Object.ID==ID&&pReview.Grade==Grade)
+                    .Include(pReview=>pReview.User)
+                    .Select(pReview =>
+                    new
+                    {
+                        ID=pReview.ID,
+                        Spoiler=pReview.Spoiler,
+                        Text=pReview.Text,
+                        Grade=pReview.Grade,
+                        Date=pReview.Date,
+                        UserName=pReview.User.Name+" "+pReview.User.LastName,
+                        UserUrl=pReview.User.ImageUrl
+                    }).ToListAsync()
+                );
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
     }
 }

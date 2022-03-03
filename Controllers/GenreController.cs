@@ -44,7 +44,7 @@ namespace Reviewer.Controllers
                 genre.Reviewer=reviewer;
                 Context.Genres.Add(genre);
                 await Context.SaveChangesAsync();
-                return Ok($"New Genre Successfully Added");
+                return Ok(genre);
             }
             catch (Exception e)
             {
@@ -58,22 +58,20 @@ namespace Reviewer.Controllers
         {
             try
             {
-                var genre = Context.Genres
-                .Where(pGenre=>pGenre.ID==ID);
-                if(genre==null)
+                var genre = await Context.Genres.Where(pGen=>pGen.ID==ID).ToArrayAsync();
+                if(genre==null&&genre.Count()==0)
                 {
                     return BadRequest("Genre Does Not Exist!");
                 }
-                return Ok
-                (
-                    await genre.Select(pGenre =>
+                return Ok(
+                    genre.Select(pGen =>
                     new
                     {
-                        ID = pGenre.ID,
-                        Title = pGenre.Title,
-                        Url = pGenre.Url
-                    }).ToListAsync()
-                );
+                        ID = pGen.ID,
+                        Title = pGen.Title,
+                        Url = pGen.Url
+                    }).ToList()
+                    );
             }
             catch (Exception e)
             {
@@ -123,6 +121,98 @@ namespace Reviewer.Controllers
             {
                 var genres = await Context.Genres.Where(pGenre=>pGenre.Reviewer.ID==ID).ToListAsync();
                 return Ok(genres);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Route("SortedObjectsDate/{ID}/{desc}")]
+        [HttpGet]
+        public async Task<ActionResult> sortedObjectsDate(int ID, bool desc)
+        {
+            try
+            {
+                if(!Context.Genres.Any(g => g.ID == ID))
+                {
+                    return BadRequest("Genre Does Not Exist!");
+                }
+                var objects=await Context.GenreObjects.Where(pObj=>pObj.Genre.ID==ID)
+                .Include(pGO=>pGO.Object)
+                .ToListAsync();
+
+                var sorted=(from o in objects
+                orderby o.Object.Date descending
+                select o).Take(objects.Count());
+
+                if(desc==false)
+                {
+                sorted=(from o in objects
+                orderby o.Object.Date ascending
+                select o).Take(objects.Count());
+                }
+                return Ok
+                (
+                   sorted.Select(pObject =>
+                    new
+                    {
+                        ID = pObject.Object.ID,
+                        Title = pObject.Object.Title,
+                        Url = pObject.Object.Url,
+                        Date=pObject.Object.Date,
+                        Description = pObject.Object.Description,
+                        Avrage = pObject.Object.Avrage,
+                        AvrageRegular=pObject.Object.AvrageRegular,
+                        AvrageCritic=pObject.Object.AvrageCritic
+                    }).ToList()
+                );
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Route("SortedObjectsGrade/{ID}/{desc}")]
+        [HttpGet]
+        public async Task<ActionResult> sortedObjectsGrade(int ID, bool desc)
+        {
+            try
+            {
+                if(!Context.Genres.Any(g => g.ID == ID))
+                {
+                    return BadRequest("Genre Does Not Exist!");
+                }
+                var objects=await Context.GenreObjects.Where(pObj=>pObj.Genre.ID==ID)
+                .Include(pObj=>pObj.Object)
+                .ToListAsync();
+
+                var sorted=(from o in objects
+                orderby o.Object.Avrage descending
+                select o).Take(objects.Count());
+
+                if(desc==false)
+                {
+                sorted=(from o in objects
+                orderby o.Object.Avrage ascending
+                select o).Take(objects.Count());
+                }
+                return Ok
+                (
+                   sorted.Select(pObject =>
+                    new
+                    {
+                        ID = pObject.Object.ID,
+                        Title = pObject.Object.Title,
+                        Url = pObject.Object.Url,
+                        Date=pObject.Object.Date,
+                        Description = pObject.Object.Description,
+                        Avrage = pObject.Object.Avrage,
+                        AvrageRegular=pObject.Object.AvrageRegular,
+                        AvrageCritic=pObject.Object.AvrageCritic
+                    }).ToList()
+                );
             }
             catch (Exception e)
             {

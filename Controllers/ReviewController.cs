@@ -18,57 +18,15 @@ namespace Reviewer.Controllers
             Context = context;
         }
 
-        [Route("DeleteReview/{ID}")]
-        [HttpDelete]
-        public async Task<ActionResult> deleteReview(int ID)
-        {
-            var review = await Context.Reviews.FindAsync(ID);
-            if (review == null)
-            {
-                return BadRequest("Review does not exist!");
-            }
-            try
-            {
-                Context.Reviews.Remove(review);
-                await Context.SaveChangesAsync();
-                var sumReviewsObjReg = Context.Reviews.Where(pReview => pReview.Object.ID == ID && pReview.User.Critic==false)
-                                .Sum(pReview=>pReview.Grade);
-                var numReviewsObjReg=Context.Reviews.Where(pReview => pReview.Object.ID == ID && pReview.User.Critic==false)
-                                .Count();
-                if(numReviewsObjReg!=0)
-                review.Object.AvrageRegular = sumReviewsObjReg/numReviewsObjReg;
-
-                var sumReviewsObjCrit = Context.Reviews.Where(pReview => pReview.Object.ID == ID && pReview.User.Critic==true)
-                                .Sum(pReview=>pReview.Grade);
-                var numReviewsObjCrit=Context.Reviews.Where(pReview => pReview.Object.ID == ID && pReview.User.Critic==true)
-                                .Count();
-                if(numReviewsObjCrit!=0)
-                review.Object.AvrageCritic = sumReviewsObjCrit/numReviewsObjCrit;
-
-                if(numReviewsObjCrit+numReviewsObjReg!=0)
-                review.Object.Avrage=(sumReviewsObjCrit+sumReviewsObjReg)/(numReviewsObjCrit+numReviewsObjReg);
-                await Context.SaveChangesAsync();
-                return Ok($"Review has been successfully deleted!");
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-        [Route("AddNewReview/{idObject}/{idUser}")]
+        [Route("AddNewReview/{idObject}/{idUser}/{text}/{grade}/{spoiler}")]
         [HttpPost]
-        public async Task<ActionResult> addNewReview(int idObject, int idUser, [FromBody] Review review)
+        public async Task<ActionResult> addNewReview(int idObject, int idUser,string text, int grade, bool spoiler)
         {
-            if(review==null)
-            {
-                return BadRequest("Not a Valid Review");
-            }
-            if (review.Grade > 5 || review.Grade < 1)
+            if (grade > 5 ||grade < 1)
             {
                 return BadRequest("Not a Valid Grade!");
             }
-            if(review.Text.Length>500)
+            if(text.Length>500)
             {
                 return BadRequest("Review Text can not be longer than 500 characters");
             }
@@ -79,10 +37,11 @@ namespace Reviewer.Controllers
             }
             try
             {
-                review.Date = DateTime.Now;
+                var date = DateTime.Now;
 
                 var objectRev = await Context.Objects.FindAsync(idObject);
                 var user = await Context.Users.FindAsync(idUser);
+
                 if (user == null)
                 {
                     return BadRequest("This user does not exist!");
@@ -92,8 +51,15 @@ namespace Reviewer.Controllers
                     return BadRequest("This object does not exist!");
                 }
 
-                review.User = user;
-                review.Object = objectRev;
+                var review=new Review
+                {
+                    Text=text,
+                    Grade=grade,
+                    Date=date,
+                    Spoiler=spoiler,
+                    Object=objectRev,
+                    User=user
+                };
 
                 Context.Reviews.Add(review);
                 await Context.SaveChangesAsync();
@@ -103,18 +69,87 @@ namespace Reviewer.Controllers
                 var numReviewsObjReg=Context.Reviews.Where(pReview => pReview.Object.ID == idObject&& pReview.User.Critic==false)
                                 .Count();
                 if(numReviewsObjReg!=0)
-                review.Object.AvrageRegular = sumReviewsObjReg/numReviewsObjReg;
+                review.Object.AvrageRegular = sumReviewsObjReg/(double)numReviewsObjReg;
+                else
+                review.Object.AvrageRegular=0;
 
                 var sumReviewsObjCrit = Context.Reviews.Where(pReview => pReview.Object.ID == idObject && pReview.User.Critic==true)
                                 .Sum(pReview=>pReview.Grade);
                 var numReviewsObjCrit=Context.Reviews.Where(pReview => pReview.Object.ID == idObject&& pReview.User.Critic==true)
                                 .Count();
                 if(numReviewsObjCrit!=0)
-                review.Object.AvrageCritic = sumReviewsObjCrit/numReviewsObjCrit;
+                review.Object.AvrageCritic = sumReviewsObjCrit/(double)numReviewsObjCrit;
+                else
+                review.Object.AvrageCritic=0;
                 if(numReviewsObjReg+numReviewsObjCrit!=0)
-                review.Object.Avrage=(sumReviewsObjCrit+sumReviewsObjReg)/(numReviewsObjCrit+numReviewsObjReg);
+                review.Object.Avrage=(sumReviewsObjCrit+sumReviewsObjReg)/(double)(numReviewsObjCrit+numReviewsObjReg);
+                else
+                review.Object.Avrage=0;
                 await Context.SaveChangesAsync();
-                return Ok($"New Review Successfully Added: {review.Date}!");
+                return Ok
+                (
+                    await Context.Reviews
+                    .Where(pReview=>pReview.ID==review.ID)
+                    .Select(pReview =>
+                    new
+                    {
+                        ID=pReview.ID,
+                        Spoiler=pReview.Spoiler,
+                        Text=pReview.Text,
+                        Grade=pReview.Grade,
+                        Date=pReview.Date,
+                        UserName=user.Name+" "+user.LastName,
+                        UserUrl=user.ImageUrl
+                    }).ToListAsync()
+                );
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Route("DeleteReview/{ID}")]
+        [HttpDelete]
+        public async Task<ActionResult> deleteReview(int ID)
+        {
+            var review=await Context.Reviews
+            .Include(pRev=>pRev.User)
+            .Include(pRev=>pRev.Object)
+            .Where(pRev=>pRev.ID==ID).FirstAsync();
+            if (review == null)
+            {
+                return BadRequest("Review does not exist!");
+            }
+            try
+            {
+                Context.Reviews.Remove(review);
+                await Context.SaveChangesAsync();
+                var sumReviewsObjReg = Context.Reviews.Where(pReview => pReview.Object.ID == review.Object.ID && pReview.User.Critic==false)
+                                .Sum(pReview=>pReview.Grade);
+                var numReviewsObjReg=Context.Reviews.Where(pReview => pReview.Object.ID == review.Object.ID && pReview.User.Critic==false)
+                                .Count();
+                if(numReviewsObjReg!=0)
+                review.Object.AvrageRegular = sumReviewsObjReg/(double)numReviewsObjReg;
+                else
+                review.Object.AvrageRegular=0;
+
+                var sumReviewsObjCrit = Context.Reviews.Where(pReview => pReview.Object.ID == review.Object.ID && pReview.User.Critic==true)
+                                .Sum(pReview=>pReview.Grade);
+                var numReviewsObjCrit=Context.Reviews.Where(pReview => pReview.Object.ID == review.Object.ID && pReview.User.Critic==true)
+                                .Count();
+                if(numReviewsObjCrit!=0)
+                review.Object.AvrageCritic = sumReviewsObjCrit/(double)numReviewsObjCrit;
+                else
+                review.Object.AvrageCritic=0;
+
+                if(numReviewsObjCrit+numReviewsObjReg!=0)
+                review.Object.Avrage=(sumReviewsObjCrit+sumReviewsObjReg)/(double)(numReviewsObjCrit+numReviewsObjReg);
+                else
+                review.Object.Avrage=0;
+
+                await Context.SaveChangesAsync();
+                return Ok($"Review has been successfully deleted!");
             }
             catch (Exception e)
             {
@@ -134,7 +169,10 @@ namespace Reviewer.Controllers
             {
                 return BadRequest("Review Text can not be longer than 500 characters");
             }
-            var review=await Context.Reviews.FindAsync(ID);
+            var review=await Context.Reviews
+            .Include(pRev=>pRev.User)
+            .Include(pRev=>pRev.Object)
+            .Where(pRev=>pRev.ID==ID).FirstAsync();
             try
             {
                 if(review==null)
@@ -147,21 +185,28 @@ namespace Reviewer.Controllers
                 review.Spoiler=Spoiler;
                 await Context.SaveChangesAsync();
 
-                var sumReviewsObjReg = Context.Reviews.Where(pReview => pReview.Object.ID == ID && pReview.User.Critic==false)
+                var sumReviewsObjReg = Context.Reviews.Where(pReview => pReview.Object.ID == review.Object.ID && pReview.User.Critic==false)
                                 .Sum(pReview=>pReview.Grade);
-                var numReviewsObjReg=Context.Reviews.Where(pReview => pReview.Object.ID == ID && pReview.User.Critic==false)
+                var numReviewsObjReg=Context.Reviews.Where(pReview => pReview.Object.ID == review.Object.ID && pReview.User.Critic==false)
                                 .Count();
                 if(numReviewsObjReg!=0)
-                review.Object.AvrageRegular = sumReviewsObjReg/numReviewsObjReg;
+                review.Object.AvrageRegular = sumReviewsObjReg/(double)numReviewsObjReg;
+                else
+                review.Object.AvrageRegular=0;
 
-                var sumReviewsObjCrit = Context.Reviews.Where(pReview => pReview.Object.ID == ID && pReview.User.Critic==true)
+                var sumReviewsObjCrit = Context.Reviews.Where(pReview => pReview.Object.ID == review.Object.ID && pReview.User.Critic==true)
                                 .Sum(pReview=>pReview.Grade);
-                var numReviewsObjCrit=Context.Reviews.Where(pReview => pReview.Object.ID == ID && pReview.User.Critic==true)
+                var numReviewsObjCrit=Context.Reviews.Where(pReview => pReview.Object.ID == review.Object.ID && pReview.User.Critic==true)
                                 .Count();
                 if(numReviewsObjCrit!=0)
-                review.Object.AvrageCritic = sumReviewsObjCrit/numReviewsObjCrit;
+                review.Object.AvrageCritic = sumReviewsObjCrit/(double)numReviewsObjCrit;
+                else
+                review.Object.AvrageCritic=0;
+
                 if(numReviewsObjCrit+numReviewsObjReg!=0)
-                review.Object.Avrage=(sumReviewsObjCrit+sumReviewsObjReg)/(numReviewsObjCrit+numReviewsObjReg);
+                review.Object.Avrage=(sumReviewsObjCrit+sumReviewsObjReg)/(double)(numReviewsObjCrit+numReviewsObjReg);
+                else
+                review.Object.Avrage=0;
                 await Context.SaveChangesAsync();
                 return Ok($"Review Successfully Updated: {review.Date}!");
             }

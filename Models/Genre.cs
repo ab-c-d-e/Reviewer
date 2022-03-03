@@ -17,6 +17,7 @@ namespace Reviewer.Models
 
         public string Url { get; set; }
    
+   [JsonIgnore]
         public Reviewers Reviewer { get; set; }
 
         public List<GenreObject> Objects { get; set; }

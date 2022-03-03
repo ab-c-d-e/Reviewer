@@ -1,27 +1,93 @@
-.containerReviewer {
-  text-align: center;
+:root {
+  --blue: rgb(39,60,128);
+}
+
+*{
+  margin: 0;
+  padding: 0;
+  border: none;
+  font-family: sans-serif;
+  box-sizing: border-box;
+  cursor: url('../../Images/Other/star.png'),auto;
+}
+
+.hero{
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  justify-content: center;
   align-items: center;
-  height: 30%;
-  width: 80%;
-  margin-bottom: 1%;
-  border: solid black;
+  background-image: url(../../Images/Other/hero1.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 
-.linkReviewer {
-  width: 100%;
-  height: 100%;
-  background-color: aqua;
+.buttonHero{
+  display: flex;
 }
 
-.Title {
+.titleHero{
+  text-align: center;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  font-size: 90px;
+  color: var(--blue);
+}
+.formReviewer{
+  display: flex;
+}
+
+
+.buttonUsersHero{
+  height: 150px;
+  width: 200px;
+  margin: 20px; 
+  font-size:50px;
+  text-transform: uppercase;
+  background-color:rgba(39, 60, 128, 0.349) ;
   color: white;
-  background-color: cornflowerblue;
 }
 
-.divObjectList {
-  border: solid black;
+.buttonReviewer{
+  height: 150px;
+  width: 200px;
+  margin: 20px; 
+  font-size:50px;
+  text-transform: uppercase;
+  background-color:rgba(39, 60, 128, 0.349) ;
+  color: white;
 }
 
-.divAboutReviewer {
-  border: solid black;
+.buttonReviewer:hover, .usersButton:hover, 
+.buttonUsersHero:hover{
+  background-color: rgba(0, 0, 0, 0.404);
+}
+
+@media only screen and (max-width: 600px) {
+  .hero{
+      flex-direction: column;
+      justify-content:center;
+  }
+  .buttonHero{
+    flex-direction: column;
+  }
+  .formReviewer{
+    width: 100vw;
+  }
+  .titleHero{
+    font-size: 70px;
+  }
+  .buttonReviewer, 
+  .buttonUsersHero{
+    width: 100vw;
+  }
+  .usersButton{
+    width: 100vw;
+  }
+  .formReviewer{
+    display: flex;
+    flex-direction: column;
+  }
 }

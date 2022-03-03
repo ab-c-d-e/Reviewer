@@ -20,6 +20,8 @@ namespace Reviewer.Models
 
         public string Url { get; set; }
         
+        public string About { get; set; }
+    [JsonIgnore]
         public Reviewers Reviewer { get; set; }
         public List<ReviewedObject> Object { get; set; }
     }

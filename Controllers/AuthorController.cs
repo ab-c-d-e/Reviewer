@@ -44,7 +44,7 @@ namespace Reviewer.Controllers
                 author.Reviewer=reviewer;
                 Context.Authors.Add(author);
                 await Context.SaveChangesAsync();
-                return Ok("New Author Successfully Added");
+                return Ok(author);
             }
             catch (Exception e)
             {
@@ -58,23 +58,13 @@ namespace Reviewer.Controllers
         {
             try
             {
-                var author = Context.Authors
-                .Where(pAuthor=>pAuthor.ID==ID);
+                var author = await Context.Authors.FindAsync(ID);
                 if(author==null)
                 {
                     return BadRequest("Author Does Not Exist!");
                 }
                 return Ok
-                (
-                    await author.Select(pAuthor =>
-                    new
-                    {
-                        ID = pAuthor.ID,
-                        Name = pAuthor.Name,
-                        LastName=pAuthor.LastName,
-                        Url = pAuthor.Url
-                    }).ToListAsync()
-                );
+                (author);
             }
             catch (Exception e)
             {
@@ -124,6 +114,94 @@ namespace Reviewer.Controllers
             {
                 var authors = await Context.Authors.Where(pAuthor=>pAuthor.Reviewer.ID==ID).ToListAsync();
                 return Ok(authors);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Route("SortedObjectsDate/{ID}/{desc}")]
+        [HttpGet]
+        public async Task<ActionResult> sortedObjectsDate(int ID, bool desc)
+        {
+            try
+            {
+                if(!Context.Authors.Any(g => g.ID == ID))
+                {
+                    return BadRequest("Author Does Not Exist!");
+                }
+                var objects=await Context.Objects.Where(pObj=>pObj.Author.ID==ID).ToListAsync();
+
+                var sorted=(from o in objects
+                orderby o.Date descending
+                select o).Take(objects.Count());
+
+                if(desc==false)
+                {
+                sorted=(from o in objects
+                orderby o.Date ascending
+                select o).Take(objects.Count());
+                }
+                return Ok
+                (
+                   sorted.Select(pObject =>
+                    new
+                    {
+                        ID = pObject.ID,
+                        Title = pObject.Title,
+                        Url = pObject.Url,
+                        Date=pObject.Date,
+                        Description = pObject.Description,
+                        Avrage = pObject.Avrage,
+                        AvrageRegular=pObject.AvrageRegular,
+                        AvrageCritic=pObject.AvrageCritic
+                    }).ToList()
+                );
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Route("SortedObjectsAvrage/{ID}/{desc}")]
+        [HttpGet]
+        public async Task<ActionResult> sortedObjectsAvrage(int ID, bool desc)
+        {
+            try
+            {
+                if(!Context.Authors.Any(g => g.ID == ID))
+                {
+                    return BadRequest("Author Does Not Exist!");
+                }
+                var objects=await Context.Objects.Where(pObj=>pObj.Author.ID==ID).ToListAsync();
+
+                var sorted=(from o in objects
+                orderby o.Avrage descending
+                select o).Take(objects.Count());
+
+                if(desc==false)
+                {
+                sorted=(from o in objects
+                orderby o.Avrage ascending
+                select o).Take(objects.Count());
+                }
+                return Ok
+                (
+                   sorted.Select(pObject =>
+                    new
+                    {
+                        ID = pObject.ID,
+                        Title = pObject.Title,
+                        Url = pObject.Url,
+                        Date=pObject.Date,
+                        Description = pObject.Description,
+                        Avrage = pObject.Avrage,
+                        AvrageRegular=pObject.AvrageRegular,
+                        AvrageCritic=pObject.AvrageCritic
+                    }).ToList()
+                );
             }
             catch (Exception e)
             {

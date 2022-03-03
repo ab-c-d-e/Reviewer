@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -40,6 +41,7 @@ namespace Reviewer.Controllers
             }
             try
             {
+
                 user.Age=DateTime.Now.Subtract(user.DateBirth).Days;
                 user.Age/=365;
                 int num=Context.Users.Where(pUser => pUser.JMBG == user.JMBG).Count();
@@ -67,11 +69,50 @@ namespace Reviewer.Controllers
                 if (user != null)
                 {
                     var Name=user.Name+" "+user.LastName;
-                    var reviews =Context.Reviews.Where(pReview => pReview.User.ID == ID);
+                    var reviews =Context.Reviews.Where(pReview => pReview.User.ID == ID)
+                    .Include(pReview=>pReview.Object)
+                    .Include(pReview=>pReview.User)
+                    .ToList();
+
+                    var objectId=new List<int>();
                     if(reviews.Count()>0)
-                    Context.Reviews.RemoveRange(reviews);
+                    {
+                        reviews.ForEach(r=>
+                        {
+                            System.Diagnostics.Debug.WriteLine(r);
+                            objectId.Add(r.Object.ID);
+                            Context.Reviews.Remove(r);
+                        });
+                    await Context.SaveChangesAsync();
+                    objectId.ForEach(idObject=>
+                    {
+                        var objectUpdate=Context.Objects.Where(pObject=>pObject.ID==idObject).FirstOrDefault();
+                        var sumReviewsObjReg = Context.Reviews.Where(pReview => pReview.Object.ID == idObject && pReview.User.Critic==false)
+                                .Sum(pReview=>pReview.Grade);
+                        var numReviewsObjReg=Context.Reviews.Where(pReview => pReview.Object.ID == idObject&& pReview.User.Critic==false)
+                                .Count();
+                        if(numReviewsObjReg!=0)
+                        objectUpdate.AvrageRegular = sumReviewsObjReg/(double)numReviewsObjReg;
+                        else
+                        objectUpdate.AvrageRegular=0;
+
+                        var sumReviewsObjCrit = Context.Reviews.Where(pReview => pReview.Object.ID == idObject && pReview.User.Critic==true)
+                                        .Sum(pReview=>pReview.Grade);
+                        var numReviewsObjCrit=Context.Reviews.Where(pReview => pReview.Object.ID == idObject&& pReview.User.Critic==true)
+                                        .Count();
+                        if(numReviewsObjCrit!=0)
+                        objectUpdate.AvrageCritic = sumReviewsObjCrit/(double)numReviewsObjCrit;
+                        else
+                        objectUpdate.AvrageCritic=0;
+                        if(numReviewsObjReg+numReviewsObjCrit!=0)
+                        objectUpdate.Avrage=(sumReviewsObjCrit+sumReviewsObjReg)/(double)(numReviewsObjCrit+numReviewsObjReg);
+                        else
+                        objectUpdate.Avrage=0;
+                    });
+                    }
                     Context.Users.Remove(user);
                     await Context.SaveChangesAsync();
+
                     return Ok($"User {Name} and all it's reviews are successfully deleted");
                 }
                 else
@@ -120,11 +161,54 @@ namespace Reviewer.Controllers
             }
         }
 
-        [Route("GetUser{ID}")]
+        [Route("GetTopTenUsers")]
+        [HttpGet]
+        public async Task<ActionResult> getTopTenUsers()
+        {
+            var users=await Context.Users.
+            Include(pUser=>pUser.Reviews).ToListAsync();
+            
+            var topTen=(from u in users
+                orderby u.Reviews.Count() descending
+                select u).Take(users.Count());
+            if(users.Count()>=10)
+            {
+            topTen=(from u in users
+                orderby u.Reviews.Count() descending
+                select u).Take(10);
+            }
+            try
+            {
+                return Ok
+                (
+                    topTen.Select(pUser =>
+                    new
+                    {
+                        ID = pUser.ID,
+                        JMBG=pUser.JMBG,
+                        DateBirth=pUser.DateBirth,
+                        Name=pUser.Name,
+                        LastName=pUser.LastName,
+                        Url=pUser.ImageUrl,
+                        Age=pUser.Age,
+                        Critic=pUser.Critic,
+                        Gender=pUser.Gender,
+                        Count=pUser.Reviews.Count()
+                    }).ToList()
+                );
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Route("GetUser/{ID}")]
         [HttpGet]
         public async Task<ActionResult> getUser(int ID)
         {
-            var user =Context.Users.Where(pUser=>pUser.ID==ID);
+            var user =Context.Users.Where(pUser=>pUser.ID==ID)
+            .Include(pUser=>pUser.Reviews);
             try
             {
                 if(!Context.Users.Any(u => u.ID == ID))
@@ -144,7 +228,8 @@ namespace Reviewer.Controllers
                         Url=pUser.ImageUrl,
                         Age=pUser.Age,
                         Critic=pUser.Critic,
-                        Gender=pUser.Gender
+                        Gender=pUser.Gender,
+                        Count=pUser.Reviews.Count()
                     }).ToListAsync()
                 );
             }
@@ -175,7 +260,9 @@ namespace Reviewer.Controllers
                         Spoiler=pReview.Spoiler,
                         Text=pReview.Text,
                         Grade=pReview.Grade,
-                        Date=pReview.Date
+                        Date=pReview.Date,
+                        ObjectTitle=pReview.Object.Title,
+                        ObjectUrl=pReview.Object.Url
 
                     }).ToListAsync()
                 );
@@ -220,7 +307,7 @@ namespace Reviewer.Controllers
         }
 
 
-        [Route("GetUsersSearch")]
+        [Route("GetUsersSearch/{search}")]
         [HttpGet]
         public async Task<ActionResult> getUsersSearch(string search)
         {
@@ -271,9 +358,125 @@ namespace Reviewer.Controllers
             }
         }
 
+        [Route("SortedReviewsDate/{ID}/{desc}")]
+        [HttpGet]
+        public async Task<ActionResult> sortedReviewsDate(int ID, bool desc)
+        {
+            try
+            {
+                if(!Context.Users.Any(u => u.ID == ID))
+                {
+                    return BadRequest("User Does Not Exist!");
+                }
+                 var reviews=await Context.Reviews.Where(pRev=>pRev.User.ID==ID)
+                 .Include(pReview=>pReview.Object)
+                 .ToListAsync();
 
+                var sorted=(from r in reviews
+                orderby r.Date descending
+                select r).Take(reviews.Count());
+
+                if(desc==false)
+                {
+                    sorted=(from r in reviews
+                    orderby r.Date ascending
+                    select r).Take(reviews.Count());
+                }
+
+                return Ok
+                (
+                    sorted
+                    .Select(pReview =>
+                    new
+                    {
+                        ID=pReview.ID,
+                        Spoiler=pReview.Spoiler,
+                        Text=pReview.Text,
+                        Grade=pReview.Grade,
+                        Date=pReview.Date,
+                        ObjectUrl=pReview.Object.Url
+                    }).ToList()
+                );
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Route("SortedReviewsGrade/{ID}/{desc}")]
+        [HttpGet]
+        public async Task<ActionResult> sortedReviewsGrade(int ID, bool desc)
+        {
+            try
+            {
+                if(!Context.Users.Any(u => u.ID == ID))
+                {
+                    return BadRequest("User Does Not Exist!");
+                }
+                 var reviews=await Context.Reviews.Where(pRev=>pRev.User.ID==ID)
+                 .Include(pReview=>pReview.Object)
+                 .ToListAsync();
+
+                var sorted=reviews.OrderByDescending(pRev=>pRev.Grade);
+
+                if(desc==false)
+                {
+                    sorted=reviews.OrderBy(pRev=>pRev.Grade);
+                }
+                return Ok
+                (
+                    sorted
+                    .Select(pReview =>
+                    new
+                    {
+                        ID=pReview.ID,
+                        Spoiler=pReview.Spoiler,
+                        Text=pReview.Text,
+                        Grade=pReview.Grade,
+                        Date=pReview.Date,
+                        ObjectUrl=pReview.Object.Url
+
+                    }).ToList()
+                );
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+    [Route("GetUserReviewsGrade/{ID}/{Grade}")]
+        [HttpGet]
+        public async Task<ActionResult> getUserReviews(int ID, int Grade)
+        {
+            try
+            {
+                if(!Context.Users.Any(u => u.ID == ID))
+                {
+                    return BadRequest("User Does Not Exist!");
+                }
+                return Ok
+                (
+                    await Context.Reviews
+                    .Where(pReview=>pReview.User.ID==ID&&pReview.Grade==Grade)
+                    .Select(pReview =>
+                    new
+                    {
+                        ID=pReview.ID,
+                        Spoiler=pReview.Spoiler,
+                        Text=pReview.Text,
+                        Grade=pReview.Grade,
+                        Date=pReview.Date
+
+                    }).ToListAsync()
+                );
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
     }
-
-
 
 }

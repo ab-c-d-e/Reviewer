@@ -26,7 +26,7 @@ namespace Reviewer.Models
         public string Description { get; set; }
         public double Avrage { get; set; }
         public double AvrageCritic { get; set; }
-         public double AvrageRegular { get; set; }
+        public double AvrageRegular { get; set; }
 
         public Author Author { get; set; }
 
