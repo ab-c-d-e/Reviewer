@@ -1,22 +1,43 @@
 import { Author } from "./authors.js";
 
+
+const titleAuthor=document.createElement("h1");
+titleAuthor.classList.add("titleAuthor");
+titleAuthor.innerHTML="AUTHORS:";
+document.body.appendChild(titleAuthor);
+
+const addAuthorContainer=document.createElement("div");
+addAuthorContainer.className="addAuthorContainer";
+document.body.appendChild(addAuthorContainer);
+
 const addAuthor=document.createElement("button");
 addAuthor.classList.add("addAuthor");
 addAuthor.innerHTML="Add Author";
-document.body.appendChild(addAuthor);
+addAuthorContainer.appendChild(addAuthor);
 
 const addAuthorForm=document.createElement("div");
 addAuthorForm.classList.add("addAuthorForm");
-document.body.appendChild(addAuthorForm);
+addAuthorContainer.appendChild(addAuthorForm);
+
+addAuthor.value="notSelected";
+addAuthor.onclick=(ev)=>
+{
+    if(addAuthor.value=="notSelected")
+    {
+        addAuthor.value="selected";
+        AddAuthor(addAuthorForm);
+    }
+    else if(addAuthor.value=="selected")
+    {
+        addAuthorForm.innerHTML="";
+        addAuthor.value="notSelected"
+    }
+}
 
 const heroAuthors=document.createElement("div");
 heroAuthors.classList.add("heroAuthors");
 document.body.appendChild(heroAuthors);
 
-addAuthor.onclick=(ev)=>
-{
-    AddAuthor(addAuthorForm);
-}
 
 var id=localStorage.getItem("idReviewer"); 
 console.log(id);
@@ -44,14 +65,17 @@ function AddAuthor(host)
 {
     var nameAdd=document.createElement("input");
     nameAdd.className="nameAdd";
+    nameAdd.placeholder="...name?"
     host.appendChild(nameAdd);
 
     var lastNameAdd=document.createElement("input");
     lastNameAdd.className="lastNameAdd";
+    lastNameAdd.placeholder="...last name?"
     host.appendChild(lastNameAdd);
 
     var aboutAdd=document.createElement("textarea");
     aboutAdd.className="aboutAdd";
+    aboutAdd.placeholder="...about author?";
     host.appendChild(aboutAdd);
 
     var imgAdd=document.createElement("input");

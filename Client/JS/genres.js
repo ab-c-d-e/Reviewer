@@ -20,23 +20,33 @@ export class Genre
         this.containerGenre.className="containerGenre";
         host.appendChild(this.containerGenre);
 
-        let formSpecificGenre=document.createElement("form");
-        formSpecificGenre.action="objects.html";
-        this.containerGenre.appendChild(formSpecificGenre);
+        let imageGenre=document.createElement("img");
+        imageGenre.src="..\\..\\Images\\Genres\\"+this.url;
+        imageGenre.classList.add("imageGenre");
+        this.containerGenre.appendChild(imageGenre);
 
-        let buttonSpecificGenre=document.createElement("input");
-        buttonSpecificGenre.type="submit";
-        buttonSpecificGenre.value=this.title;
-        buttonSpecificGenre.onclick=(ev)=>
+        let title=document.createElement("div");
+        title.innerHTML=this.title;
+        title.className="titleGenre";
+        this.containerGenre.appendChild(title);
+
+        imageGenre.onclick=(ev)=>
         {
             localStorage.setItem("objectsType","genres");
+            localStorage.setItem("genreTitle",this.title);
             localStorage.setItem("objects",this.id);
+            window.open("objects.html", '_self');
         }
-        formSpecificGenre.prepend(buttonSpecificGenre);
     }
 
     filterObject(host, heroObjects)
     {
+        var name=localStorage.getItem("genreTitle");
+        console.log(name);
+        var titleGenre=document.createElement("h3");
+        titleGenre.className="titleGenre";
+        titleGenre.innerHTML=name;
+        host.appendChild(titleGenre);
         if(!host)
         {
             throw new Error("Parent Element Does Not Exist!");
@@ -158,12 +168,12 @@ export class Genre
 
         var optionSmallest=document.createElement("option");
         optionSmallest.value="smallest";
-        optionSmallest.innerHTML="Grade ⬇";
+        optionSmallest.innerHTML="Grade ⬆";
         selectSort.appendChild(optionSmallest);
 
         var optionLargerst=document.createElement("option");
         optionLargerst.value="largest";
-        optionLargerst.innerHTML="Grade ⬆";
+        optionLargerst.innerHTML="Grade ⬇";
         selectSort.appendChild(optionLargerst);
 }
 }

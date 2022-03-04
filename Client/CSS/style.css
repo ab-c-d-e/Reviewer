@@ -18,10 +18,20 @@
   height: 100vh;
   justify-content: center;
   align-items: center;
-  background-image: url(../../Images/Other/hero1.jpg);
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
+  background: linear-gradient(-45deg, #ee7752, hsl(245, 76%, 16%), #23a6d5, #ecee6f);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+@keyframes gradient {
+  0% {
+      background-position: 0% 50%;
+  }
+  50% {
+      background-position: 100% 50%;
+  }
+  100% {
+      background-position: 0% 50%;
+  }
 }
 
 .buttonHero{
@@ -46,23 +56,28 @@
   margin: 20px; 
   font-size:50px;
   text-transform: uppercase;
-  background-color:rgba(39, 60, 128, 0.349) ;
-  color: white;
+  background-color:rgba(255, 255, 255, 0.315) ;
+  color: rgb(0, 0, 0);
+  border-radius: 15px;
 }
 
 .buttonReviewer{
   height: 150px;
-  width: 200px;
+  width: 250px;
   margin: 20px; 
   font-size:50px;
   text-transform: uppercase;
-  background-color:rgba(39, 60, 128, 0.349) ;
+  background-color:rgba(0, 0, 0, 0.349) ;
   color: white;
+  border-radius: 15px;
 }
 
-.buttonReviewer:hover, .usersButton:hover, 
+.buttonReviewer:hover, .usersButton:hover{
+  background-color: rgba(0, 0, 0, 0.562);
+}
+
 .buttonUsersHero:hover{
-  background-color: rgba(0, 0, 0, 0.404);
+  background-color: rgba(255, 255, 255, 0.61);
 }
 
 @media only screen and (max-width: 600px) {

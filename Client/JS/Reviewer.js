@@ -18,13 +18,35 @@ export class Reviewer
         {
             throw new Error("Parent Element Does Not Exist!");
         }
+        const divNavigation=document.createElement("div");
+        divNavigation.className="divNavigation";
+        host.appendChild(divNavigation);
+
         this.containerReviewer = document.createElement("div");
         this.containerReviewer.className="containerReviewer";
-        host.appendChild(this.containerReviewer );
+        host.appendChild(this.containerReviewer);
         
         this.containerListObjects = document.createElement("div");
         this.containerListObjects.className="containerListObjects";
         host.appendChild(this.containerListObjects);
+
+        let buttonHome=document.createElement("button");
+        buttonHome.innerHTML="HOME";
+        buttonHome.className="buttonHome";
+        divNavigation.appendChild(buttonHome);
+
+        buttonHome.onclick=(ev)=>{
+            window.open("home.html", '_self');
+        }
+
+        let buttonUsers=document.createElement("button");
+        buttonUsers.innerHTML="USERS";
+        buttonUsers.className="buttonUsers";
+        divNavigation.appendChild(buttonUsers);
+
+        buttonUsers.onclick=(ev)=>{
+            window.open("usersMain.html", '_self');
+        }
 
         const heroLeft=document.createElement("div");//flex-column
         heroLeft.classList.add("heroLeft");
@@ -94,6 +116,10 @@ export class Reviewer
 
     getTopTen(host)
     {
+        const titleTopTen=document.createElement("h3");
+        titleTopTen.className="titleTopTen";
+        titleTopTen.innerHTML="Top Ten Best Rated:"
+        host.appendChild(titleTopTen);
         fetch("https://localhost:5001/Reviewer/GetTopTen/"+this.id, 
         {method: "GET"})
         .then

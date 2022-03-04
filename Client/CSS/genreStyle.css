@@ -11,30 +11,6 @@
     display: flex;
 }
 
-.divNavigation{
-    display: flex;
-    justify-content: flex-end;
-    width: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-}
-
-.buttonHome, .buttonUsers{
-    width:50%;
-    height: 50px;
-    background-color: rgba(0, 0, 0, 0.349);
-    border:none;
-    font-size: 30px;
-    color: white;
-}
-
-
-.buttonHome:hover, .buttonUsers:hover{
-    background-color: rgb(0, 0, 0);
-    cursor: pointer;
-}
-
 .columnGenres{
     display: flex;
     flex-direction: column;
@@ -79,7 +55,6 @@ textarea{
     animation: gradient 15s ease infinite;
     align-items: center;
     justify-content: space-between;
-    margin-top: 50px;
 }
 
 
@@ -158,6 +133,7 @@ textarea{
     flex-direction: column;
     justify-content: space-between;
 }
+
 .divGenreList
 {
     position: absolute;
@@ -165,8 +141,7 @@ textarea{
     top: 0;
     background-color: rgba(0, 0, 0, 0.836);
     width: 100vw;
-    height: fit-content;
-    min-height: 100vh;
+    height: 100%;
     display: flex;
     flex-direction: column;
 }
@@ -272,6 +247,7 @@ textarea{
 
 .addReview{
     display: flex;
+    justify-content:space-around;
     background: linear-gradient(to  left, #ffffff, hsla(318, 43%, 60%, 0.637), #32b0dd70, #ffffff);
     background-size: 400% 400%;
     animation: gradient 15s ease infinite;
@@ -282,7 +258,6 @@ textarea{
     display: flex;
     flex-direction:column ;
     background-color: white;
-    justify-content: space-around;
     padding: 10px;
     width:30%;
 }
@@ -304,7 +279,6 @@ textarea{
     background-color: transparent;
     font-size: 30px;
     border-radius: 15px;
-    align-self: center;
 }
 
 .buttonAddReview:hover{
@@ -337,10 +311,6 @@ textarea{
    display: flex;
    justify-content: center;
    margin: 10px;
-   position: relative;
-   text-align: center;
-   color: white;
-   width: 30%;
 }
 .genreButton:hover{
     background-color: aliceblue;
@@ -418,7 +388,7 @@ textarea{
 
 .gradeReview{
     font-size: 30px;
-    align-self: center;
+    margin:3px;
 }
 
 .spoiler{
@@ -462,9 +432,23 @@ textarea{
     border-radius: 15px;
     padding-left:10px;
 }
+
+.containerGenre{
+    position: relative;
+    text-align: center;
+    color: white;
+}
 .titleGenres{
     text-align: center;
     font-size: 50px;
+}
+
+.containerGenre img{
+    width: 300px;
+    height: 200px;
+    border: 2px solid black;
+    opacity: 0.5;
+    border-radius: 10px;
 }
 
 .titleGenre{
@@ -511,31 +495,6 @@ textarea{
     box-shadow: 5px 10px #00000021;
     height: 300px;
 }
-
-input[type=number]
-{
-width: 45px;
-height: 42px;
-line-height: 1.65;
-float: left;
-display: block;
-padding: 0;
-margin: 0;
-padding-left: 20px;
-border: 1px solid #eee;
-}
-
-.spoiler{
-    cursor: pointer;   
-}
-input[type=number]:focus {
-    outline: 0;
-    }
-    
-    .divSpoiler,.divCritic, .divRegular, .divSearch{
-        align-self: center;
-        justify-content: center;
-    }
 /*Review*/
 @media only screen and (max-width: 600px) 
 {
@@ -544,14 +503,6 @@ input[type=number]:focus {
         height: fit-content;
         align-items: center;
         border: none;
-    }
-    .containerGenres{
-        display: flex;
-        align-items:  center;
-        flex-wrap: wrap;
-    }
-    .containerGenre{
-        width: 90%;
     }
     .heroGenres{
         flex-direction: column;
@@ -607,7 +558,9 @@ input[type=number]:focus {
         width: 100%;
         margin-top: 20px;
     }
-
+    .divSpoiler,.divCritic, .divRegular, .divSearch{
+        align-self: center;
+    }
     .textReview{
         width: 100%;
         margin: 0px;
@@ -628,6 +581,9 @@ input[type=number]:focus {
         flex-direction: column;
     }
     
+    .containerGenre{
+        margin: 0;
+    }
 
     .genreButton{
         width: 90%;
@@ -642,6 +598,10 @@ input[type=number]:focus {
         background-color: aliceblue;
     }
 
+    .divGenreList{
+        height: 100vh;
+        min-height:fit-content;
+    }
     
     .genreButtonSelected
     {

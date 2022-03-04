@@ -467,7 +467,8 @@ namespace Reviewer.Controllers
                         Spoiler=pReview.Spoiler,
                         Text=pReview.Text,
                         Grade=pReview.Grade,
-                        Date=pReview.Date
+                        Date=pReview.Date,
+                        ObjectUrl=pReview.Object.Url
 
                     }).ToListAsync()
                 );

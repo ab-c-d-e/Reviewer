@@ -35,6 +35,28 @@ export class Object
         divTitle.className="divTitle";
         this.containerObject.appendChild(divTitle);
 
+        const divNavigation=document.createElement("div");
+        divNavigation.className="divNavigation";
+        this.containerObject.appendChild(divNavigation);
+
+        let buttonHome=document.createElement("button");
+        buttonHome.innerHTML="BACK";
+        buttonHome.className="buttonHome";
+        divNavigation.appendChild(buttonHome);
+
+        buttonHome.onclick=(ev)=>{
+            window.open("reviewer.html", '_self');
+        }
+
+        let buttonUsers=document.createElement("button");
+        buttonUsers.innerHTML="USERS";
+        buttonUsers.className="buttonUsers";
+        divNavigation.appendChild(buttonUsers);
+
+        buttonUsers.onclick=(ev)=>{
+            window.open("usersMain.html", '_self');
+        }
+
         const Title=document.createElement("div");
         Title.className="Title";
         divTitle.appendChild(Title);
@@ -133,10 +155,14 @@ export class Object
 
         let srcAuthor=document.createElement("a");
         srcAuthor.className="sourceAuthor";
-        localStorage.setItem("objectsType","authors");
-        localStorage.setItem("objects",this.author.id);
         srcAuthor.innerHTML=this.author.name+" "+this.author.lastName;
-        srcAuthor.href="objects.html";
+        srcAuthor.onclick=(ev)=>
+            {
+                localStorage.setItem("objectsType","authors");
+                localStorage.setItem("objects",this.author.id);
+                localStorage.setItem("authorTitle",this.author.name+" "+this.author.lastName);
+                window.open("objects.html", '_self');
+            }
         divAuthor.appendChild(srcAuthor);
 
         fetch("https://localhost:5001/ReviewedObject/GetObjectGenres/"+this.id, 
@@ -153,13 +179,17 @@ export class Object
                             genres.forEach(genre =>
                             {
                                 this.listGenre.push(genre.id);
-                                let srcGenra=document.createElement("a");
-                                srcGenra.className="sourceGenra";
-                                localStorage.setItem("objectsType","genres");
-                                localStorage.setItem("objects",genre.id);
-                                srcGenra.innerHTML="#"+genre.titleGenre;
-                                srcGenra.href="objects.html";
-                                this.containerGenres.appendChild(srcGenra);
+                                let srcGenre=document.createElement("a");
+                                srcGenre.className="sourceGenra";
+                                srcGenre.innerHTML="#"+genre.titleGenre;
+                                srcGenre.onclick=(ev)=>
+                                {
+                                    localStorage.setItem("objectsType","genres");
+                                    localStorage.setItem("objects",genre.id);
+                                    window.open("objects.html", '_self');
+                                    localStorage.setItem("genreTitle",genre.titleGenre);
+                                }
+                                this.containerGenres.appendChild(srcGenre);
                             });
                         })
                 })
@@ -190,11 +220,22 @@ export class Object
         this.containerStatistic.className="containerStatistic";
         this.containerObject.appendChild(this.containerStatistic);
 
-        this.drawGradeStat(this.containerStatistic);
-        this.drawGenderPie(this.containerStatistic);
-        this.drawAgeStat(this.containerStatistic);
-    }
+        const divGrades=document.createElement("div");
+        divGrades.className="divGrades";
+        this.containerStatistic.appendChild(divGrades);
+        
+        const divPie=document.createElement("div");
+        divPie.className="piechart";
+        this.containerStatistic.appendChild(divPie);
 
+        const divAge=document.createElement("div");
+        divAge.className="divAge";
+        this.containerStatistic.appendChild(divAge);
+
+        this.drawGradeStat(divGrades);
+        this.drawGenderPie(divPie);
+        this.drawAgeStat(divAge);
+    }
     drawObjectShorter(host)
     {
         if(!host)
@@ -252,7 +293,7 @@ export class Object
         divGrade.appendChild(divRatingCritic);
 
         let labelAvrageCritic=document.createElement("label");
-        labelAvrageCritic.className="labelAvrage";
+        labelAvrageCritic.className="labelAvrageCritic";
         labelAvrageCritic.innerHTML="Critics"
         divRatingCritic.appendChild(labelAvrageCritic);
 
@@ -266,7 +307,7 @@ export class Object
         divGrade.appendChild(divRatingRegular);
 
         let labelAvrageRegular=document.createElement("label");
-        labelAvrageRegular.className="labelAvrage";
+        labelAvrageRegular.className="labelAvrageRegular";
         labelAvrageRegular.innerHTML="Audience"
         divRatingRegular.appendChild(labelAvrageRegular);
 
@@ -310,7 +351,6 @@ export class Object
             window.open("object.html", '_self');
         }
     }
-
     filterReviews(host)
     {
         if(!host)
@@ -523,7 +563,6 @@ export class Object
         option5.innerHTML="Grade 5";
         selectGrade.appendChild(option5);
     }
-
     deleteObject(host)
     {
         fetch("https://localhost:5001/ReviewedObject/DeleteObject/" + this.id, {
@@ -537,7 +576,6 @@ export class Object
                 alert("MistakeOccured!");
         })
     }
-
     addGenres(host)
     {
         host.innerHTML="";
@@ -711,7 +749,6 @@ export class Object
         
 
     }
-
     removeGenres(host)
     {
         host.innerHTML="";
@@ -811,7 +848,7 @@ export class Object
                     {
                         if(pObject.ok)
                         {
-                            alert("Succesfully Added Genres!");
+                            alert("Succesfully Revoved Genres!");
                             this.containerGenres.innerHTML="";
         let addGenres=document.createElement("button");
         addGenres.onclick=(ev)=>
@@ -877,9 +914,6 @@ export class Object
 
         }
     }
-
-  
-
     drawAgeStat(host)
     {
         var a1;
@@ -904,10 +938,6 @@ export class Object
                         a2=object.between2040;
                         a3=object.between4060;
                         a4=object.more60;
-
-                        const divGrades=document.createElement("div");
-                        divGrades.className="divGrades";
-                        host.appendChild(divGrades);
                 
                         var one=document.createElement("div");
                         one.className="gradeContainer";
@@ -915,7 +945,7 @@ export class Object
                         var precent=(parseInt(a1)*100)/object.count;
                         else
                         precent=0;
-                        divGrades.appendChild(one);
+                        host.appendChild(one);
                 
                         if(precent>0)
                        { 
@@ -934,7 +964,7 @@ export class Object
                         precent=(a2/object.count)*100;
                         else
                         precent=0;
-                        divGrades.appendChild(two);
+                        host.appendChild(two);
                 
                         if(precent>0)
                         {
@@ -953,7 +983,7 @@ export class Object
                         else 
                         precent=0;
                         three.className="gradeContainer";
-                        divGrades.appendChild(three);
+                        host.appendChild(three);
                 
                        if(precent>0)
                        { 
@@ -972,7 +1002,7 @@ export class Object
                         precent=(a4/object.count)*100;
                         else
                         precent=0;
-                        divGrades.appendChild(four);
+                        host.appendChild(four);
 
                         if(precent>0)
                         { 
@@ -1008,15 +1038,12 @@ export class Object
                         f=object.female;
                         m=object.male;
 
-                        const divPie=document.createElement("div");
-                        divPie.className="piechart";
-                        host.appendChild(divPie);
                         
                         if(this.count!=0)
                         var precent=(parseInt(f)*360)/object.count;
                         else precent=0;
 
-                        divPie.style.setProperty("--l",precent+"deg");
+                        host.style.setProperty("--l",precent+"deg");
                     });
                 })
         })
@@ -1047,10 +1074,6 @@ export class Object
                         a3=object.three;
                         a4=object.four;
                         a5=object.five; 
-
-                        const divGrades=document.createElement("div");
-                        divGrades.className="divGrades";
-                        host.appendChild(divGrades);
                 
                         var one=document.createElement("div");
                         one.className="gradeContainer";
@@ -1058,7 +1081,7 @@ export class Object
                         var precent=(parseInt(a1)*100)/object.count;
                         else
                         precent=0;
-                        divGrades.appendChild(one);
+                        host.appendChild(one);
                 
                         if(precent!=0)
                         {
@@ -1077,7 +1100,7 @@ export class Object
                         precent=(a2/object.count)*100;
                         else
                         precent=0;
-                        divGrades.appendChild(two);
+                        host.appendChild(two);
 
                         if(precent!=0)
                         {
@@ -1096,7 +1119,7 @@ export class Object
                         else 
                         precent=0;
                         three.className="gradeContainer";
-                        divGrades.appendChild(three);
+                        host.appendChild(three);
                 
                         if(precent!=0)
                         {
@@ -1115,7 +1138,7 @@ export class Object
                         precent=(a4/object.count)*100;
                         else
                         precent=0;
-                        divGrades.appendChild(four);
+                        host.appendChild(four);
                 
                         if(precent!=0)
                         {
@@ -1134,7 +1157,7 @@ export class Object
                         precent=(a5/object.count)*100;
                         else
                         precent=0;
-                        divGrades.appendChild(five);
+                        host.appendChild(five);
                 
                         if(precent!=0)
                         {

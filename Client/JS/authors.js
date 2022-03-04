@@ -21,23 +21,30 @@ export class Author
         this.containerAuthor.className="containerAuthor";
         host.appendChild(this.containerAuthor);
 
-        let formSpecificAuthor=document.createElement("form");
-        formSpecificAuthor.action="objects.html";
-        this.containerAuthor.appendChild(formSpecificAuthor);
+        let imageAuthor=document.createElement("img");
+        imageAuthor.src="..\\..\\Images\\Authors\\"+this.url;
+        imageAuthor.classList.add("imageAuthor");
+        this.containerAuthor.appendChild(imageAuthor);
+
+        const divAuthor=document.createElement("div");
+        divAuthor.className="divAuthor";
+        this.containerAuthor.appendChild(divAuthor);
+
+        let nameAuthor=document.createElement("h3");
+        nameAuthor.innerHTML=this.name+" "+this.lastName;
+        divAuthor.appendChild(nameAuthor);
 
         let aboutAuthor=document.createElement("p");
         aboutAuthor.innerHTML=this.about;
-        this.containerAuthor.appendChild(aboutAuthor);
+        divAuthor.appendChild(aboutAuthor);
 
-        let buttonSpecificAuthor=document.createElement("input");
-        buttonSpecificAuthor.type="submit";
-        buttonSpecificAuthor.value=this.name+' '+this.lastName;
-        buttonSpecificAuthor.onclick=(ev)=>
+        imageAuthor.onclick=(ev)=>
         {
             localStorage.setItem("objectsType","authors");
             localStorage.setItem("objects",this.id);
+            localStorage.setItem("name", this.name+" "+this.lastName);
+            window.open("objects.html", '_self');
         }
-        formSpecificAuthor.prepend(buttonSpecificAuthor);
     }
 
     filterObject(host, heroObjects)
@@ -46,6 +53,13 @@ export class Author
         {
             throw new Error("Parent Element Does Not Exist!");
         }
+        var name=localStorage.getItem("name");
+        console.log(name);
+        var titleGenre=document.createElement("h3");
+        titleGenre.className="titleGenre";
+        titleGenre.innerHTML=name;
+        host.appendChild(titleGenre);
+
         var selectSort=document.createElement("select");
         selectSort.name="selectReviewSort";
         selectSort.className="selectReviewSort";
@@ -159,12 +173,12 @@ export class Author
 
         var optionSmallest=document.createElement("option");
         optionSmallest.value="smallest";
-        optionSmallest.innerHTML="Grade ⬇";
+        optionSmallest.innerHTML="Grade ⬆";
         selectSort.appendChild(optionSmallest);
 
         var optionLargerst=document.createElement("option");
         optionLargerst.value="largest";
-        optionLargerst.innerHTML="Grade ⬆";
+        optionLargerst.innerHTML="Grade ⬇";
         selectSort.appendChild(optionLargerst);
-}
+    }
 }

@@ -5,24 +5,52 @@ titleGenres.classList.add("titleGenres");
 titleGenres.innerHTML="GENRES:";
 document.body.appendChild(titleGenres);
 
+const addGenreContainer=document.createElement("div");
+addGenreContainer.className="addGenreContainer";
+document.body.appendChild(addGenreContainer);
+
+
 const addGenres=document.createElement("button");
 addGenres.classList.add("addGenres");
 addGenres.innerHTML="Add Genre";
-document.body.appendChild(addGenres);
+addGenreContainer.appendChild(addGenres);
 
 const addGenreForm=document.createElement("div");
 addGenreForm.classList.add("addGenreForm");
-document.body.appendChild(addGenreForm);
+addGenreContainer.appendChild(addGenreForm);
 
+addGenres.value="notSelected";
 addGenres.onclick=(ev)=>
 {
-    AddGenre(addGenreForm);
+    if(addGenres.value=="notSelected")
+    {
+        addGenres.value="selected";
+       AddGenre(addGenreForm);
+    }
+    else if(addGenres.value=="selected")
+    {
+        addGenreForm.innerHTML="";
+        addGenres.value="notSelected"
+    }
 }
 
 const heroGenres=document.createElement("div");
 heroGenres.classList.add("heroGenres");
 document.body.appendChild(heroGenres);
 
+const column1=document.createElement("div");
+column1.className="columnGenres";
+heroGenres.appendChild(column1);
+
+const column2=document.createElement("div");
+column2.className="columnGenres";
+heroGenres.appendChild(column2);
+
+const column3=document.createElement("div");
+column3.className="columnGenres";
+heroGenres.appendChild(column3);
+
+var i=1;
 
 var id=localStorage.getItem("idReviewer"); 
 console.log(id);
@@ -40,8 +68,22 @@ fetch("https://localhost:5001/Genre/GetAllGenres/"+id,
                 {
                     genres.forEach(genre =>
                     {
-                        let newGenre = new Genre(genre.id,genre.title,genre.url);
-                        newGenre.drawGenre(heroGenres);
+                        if(i%3==0)
+                        {
+                            let newGenre = new Genre(genre.id,genre.title,genre.url);
+                            newGenre.drawGenre(column1);
+                        }
+                        else if(i%3==1)
+                        {
+                            let newGenre = new Genre(genre.id,genre.title,genre.url);
+                            newGenre.drawGenre(column2);
+                        }
+                        else if(i%3==2)
+                        {
+                            let newGenre = new Genre(genre.id,genre.title,genre.url);
+                            newGenre.drawGenre(column3);
+                        }
+                        i++;
                     });
                 })
         })
@@ -108,8 +150,15 @@ function AddGenre(host)
                             genre=>
                             {
                                     alert("Succesfully Added Genre!");
+                                    var whereToAdd;
+                                    if(column1.childElementCount<column2.childElementCount)
+                                    whereToAdd=column1;
+                                    else whereToAdd=column2;
+                                    if(whereToAdd.childElementCount>column3.childElementCount)
+                                    whereToAdd=column3;
+
                                     let newGenre = new Genre(genre.id,genre.title,genre.url);
-                                    newGenre.drawGenre(heroGenres);
+                                    newGenre.drawGenre(whereToAdd);
                             })
 
                     }

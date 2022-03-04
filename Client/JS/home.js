@@ -2,11 +2,6 @@ const containerHero=document.createElement("div");
 containerHero.classList.add("hero");
 document.body.appendChild(containerHero);
 
-let titleHero=document.createElement("h1");
-titleHero.className="titleHero";
-titleHero.innerHTML="Reviewer";
-containerHero.appendChild(titleHero);
-
 const containerButtonHero=document.createElement("div");
 containerButtonHero.classList.add("buttonHero");
 containerHero.appendChild(containerButtonHero);
