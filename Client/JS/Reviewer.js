@@ -157,13 +157,24 @@ export class Reviewer
         formForAdding.appendChild(descriptionAddObject);
         descriptionAddObject.placeholder="Description?";
 
+        let enterAuthor=document.createElement("input");
+        enterAuthor.placeholder="...search author?";
+        enterAuthor.className="enterAuthor";
+        formForAdding.appendChild(enterAuthor);
+
         let selectAuthor=document.createElement("select");
         selectAuthor.className="selectAuthor";
         formForAdding.appendChild(selectAuthor);
 
-        fetch("https://localhost:5001/Author/GetAllAuthors/"+this.id, 
-        {method: "GET"})
-        .then
+        enterAuthor.oninput=(ev)=>
+        {
+            selectAuthor.innerHTML="";
+            let text=enterAuthor.value;
+            if(text.length!=0)
+            {
+            fetch("https://localhost:5001/Author/GetAuthorsSearch/"+this.id+"/"+text, 
+            {method: "GET"})
+            .then
             (
                 pauthor=>
                 {
@@ -181,6 +192,8 @@ export class Reviewer
                             });
                         })
                 })
+            }
+        }
         
         let pictureObject=document.createElement("input");
         pictureObject.type="file";

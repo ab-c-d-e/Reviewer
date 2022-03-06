@@ -299,7 +299,7 @@ namespace Reviewer.Controllers
 
         [Route("GetObjectSearch/{ID}/{search}")]
         [HttpGet]
-        public async Task<ActionResult> getAllObjects(int ID, string search)
+        public async Task<ActionResult> getObjectSearch(int ID, string search)
         {
             try
             {

@@ -488,11 +488,15 @@ textarea{
     background-color: transparent;
     border-radius: 15px;
     border: 2px solid black;
+    font-size: 30px;
+    text-transform: uppercase;
+    cursor: pointer;
 }
+
 
 .imageGenre{
     margin: 20px;
-    box-shadow: 5px 10px #00000021;
+    box-shadow: 5px 10px #0000005b;
     height: 300px;
 }
 /*Review*/

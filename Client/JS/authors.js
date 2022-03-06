@@ -19,7 +19,7 @@ export class Author
         }
         this.containerAuthor = document.createElement("div");
         this.containerAuthor.className="containerAuthor";
-        host.appendChild(this.containerAuthor);
+        host.prepend(this.containerAuthor);
 
         let imageAuthor=document.createElement("img");
         imageAuthor.src="..\\..\\Images\\Authors\\"+this.url;

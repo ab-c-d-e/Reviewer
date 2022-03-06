@@ -7,7 +7,7 @@
     display: flex;
     margin: 20px;
     padding: 10px;
-    background: linear-gradient(to  left, #ffffff, hsla(318, 43%, 60%, 0.637), #32b0dd70, #ffffff);
+    background: linear-gradient(to  left, #ffffff, hsla(0, 0%, 0%, 0.349), #ffffff);
     background-size: 400% 400%;
     animation: gradient 15s ease infinite;
 }
@@ -27,6 +27,8 @@
     margin-right:20px ;
     border:2px solid black;
     cursor: pointer;
+    height: 200px;
+    width: 170px;
 }
 
 .imageAuthor:hover{
@@ -77,6 +79,9 @@ textarea{
     background-color: transparent;
     border-radius: 15px;
     border: 2px solid black;
+    font-size: 30px;
+    text-transform: uppercase;
+    cursor: pointer;
 }
 
 .addAuthor:hover{

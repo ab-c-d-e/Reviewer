@@ -209,5 +209,20 @@ namespace Reviewer.Controllers
             }
         }
 
+        [Route("GetAuthorsSearch/{ID}/{search}")]
+        [HttpGet]
+        public async Task<ActionResult> getAuthorsSearch(int ID, string search)
+        {
+            try
+            {
+                
+                var authors =await Context.Authors.Where(pAuthor=>pAuthor.Reviewer.ID==ID).Where(pAuthor=>pAuthor.Name.Contains(search)||pAuthor.LastName.Contains(search)||search==null).ToListAsync();
+                return Ok(authors);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
     }
 }
