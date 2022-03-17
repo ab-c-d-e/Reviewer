@@ -30,6 +30,7 @@ export class Reviewer
         this.containerListObjects.className="containerListObjects";
         host.appendChild(this.containerListObjects);
 
+        
         let buttonHome=document.createElement("button");
         buttonHome.innerHTML="HOME";
         buttonHome.className="buttonHome";
@@ -45,6 +46,7 @@ export class Reviewer
         divNavigation.appendChild(buttonUsers);
 
         buttonUsers.onclick=(ev)=>{
+
             window.open("usersMain.html", '_self');
         }
 
@@ -120,7 +122,7 @@ export class Reviewer
         titleTopTen.className="titleTopTen";
         titleTopTen.innerHTML="Top Ten Best Rated:"
         host.appendChild(titleTopTen);
-        fetch("https://localhost:5001/Reviewer/GetTopTen/"+this.id, 
+        fetch("https://localhost:5001/Reviewer/GetTopTen/"+this.id,
         {method: "GET"})
         .then
         (
@@ -291,7 +293,6 @@ export class Reviewer
                                 genreButton.classList.add("genreButtonSelected");
                                 genreButton.value="Selected";
                                 listIDGenras.push(genre.id);
-                                console.log(listIDGenras);
                             }
                             else if(genreButton.value==="Selected")
                             {
@@ -300,7 +301,6 @@ export class Reviewer
                                 listIDGenras=listIDGenras.filter(function(value){ 
                                     return value != genre.id;
                                 });
-                                console.log(listIDGenras);
                             }
                         }
                     });
@@ -309,11 +309,22 @@ export class Reviewer
 
         let addButtonFinal=document.querySelector(".buttonAddObject");
     
+
+
         addButtonFinal.onclick=(ev)=>
         {
-            let postRequest = encodeURI("https://localhost:5001/ReviewedObject/AddNewObject/"
+            let postRequest;
+            var ok=true;
+            if(selectAuthor.value!=null&&selectAuthor.value.length!=0)
+            {
+            postRequest = encodeURI("https://localhost:5001/ReviewedObject/AddNewObject/"
             + selectAuthor.value + "?");
-
+            }//local....?id=1&id=2...&
+            else
+            {
+                ok=false;
+                alert("Add Author!");
+            }
         listIDGenras.forEach((idGenre) => 
             {
                 postRequest += "idGenre="
@@ -321,22 +332,19 @@ export class Reviewer
                 postRequest += "&";
             });
 
-        var ok=true;
-        if(titleAddObject.value!=null)
+        if(titleAddObject.value!=null&&titleAddObject.value.length!=0&&ok)
         postRequest+="Title="+titleAddObject.value+"&";
-        else 
+        else if(ok)
         {
             ok=false;
-            console.log(postRequest);
             alert("Add Title!");
         }
 
-        if(descriptionAddObject.value!=null&&descriptionAddObject.value.length<=400)
+        if(descriptionAddObject.value!=null&&descriptionAddObject.value.length!=0&&ok)
         postRequest+="Description="+descriptionAddObject.value+"&";
-        else 
+        else if(ok)
         {
             ok=false;
-            console.log(descriptionAddObject.length);
             alert("Add Description!");
         }
 
@@ -350,36 +358,35 @@ export class Reviewer
         {
             postRequest+="Url="+"placeholder.png";
         }
-            if(ok)
+        if(ok)
+        {
+        fetch(postRequest, 
+        {
+            method: "POST" 
+        }).then
+        (
+            pObject=>
             {
-            console.log(postRequest);
-            fetch(postRequest, 
-            {
-                method: "POST" 
-            }).then
-                (
-                    pObject=>
-                    {
-                        if(pObject.ok)
+                if(pObject.ok)
+                {
+                    alert("Succesfully Added Object!");
+                    this.addObjectForm(host);
+                }
+                else
+                {
+                    pObject.text().then
+                    (
+                        object=>
                         {
-                            alert("Succesfully Added Object!");
-                            this.addObjectForm(host);
+                            alert(object);
                         }
-                        else
-                        {
-                            pObject.text().then
-                            (
-                                object=>
-                                {
-                                    alert(object);
-                                }
-                            )
-                        }
-                        
-                    })
+                    )
+                }
                 
-            }
-            }
-
+            })
+                
+        }
+        }
     }
+
 }

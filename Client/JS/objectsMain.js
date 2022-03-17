@@ -10,8 +10,7 @@ const heroObjects=document.createElement("div");
 heroObjects.classList.add("heroObjects");
 document.body.appendChild(heroObjects);
 
-var type=localStorage.getItem("objectsType"); 
-console.log(type);
+var type=localStorage.getItem("objectsType");
 var fetchObj=localStorage.getItem("objects");
 
 var id=localStorage.getItem("idReviewer"); 
@@ -89,7 +88,7 @@ fetch("https://localhost:5001/Author/GetAuthor/"+fetchObj,
             (
                 author=>
                 {
-                    let newAuthor = new Author(author.id,author.title,author.url, author.about);
+                    let newAuthor = new Author(author.id,author.name,author.lastName,author.url,author.about);
                     newAuthor.filterObject(heroFilter,heroObjects);
             })
     })

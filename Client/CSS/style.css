@@ -50,18 +50,9 @@
 }
 
 
-.buttonUsersHero{
-  height: 150px;
-  width: 200px;
-  margin: 20px; 
-  font-size:50px;
-  text-transform: uppercase;
-  background-color:rgba(255, 255, 255, 0.315) ;
-  color: rgb(0, 0, 0);
-  border-radius: 15px;
-}
 
-.buttonReviewer{
+.buttonReviewer,
+.buttonUsersHero {
   height: 150px;
   width: 250px;
   margin: 20px; 
@@ -72,12 +63,8 @@
   border-radius: 15px;
 }
 
-.buttonReviewer:hover, .usersButton:hover{
+.buttonReviewer:hover, .usersButton:hover, .buttonUsersHero:hover{
   background-color: rgba(0, 0, 0, 0.562);
-}
-
-.buttonUsersHero:hover{
-  background-color: rgba(255, 255, 255, 0.61);
 }
 
 @media only screen and (max-width: 600px) {

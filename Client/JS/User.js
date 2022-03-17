@@ -566,7 +566,7 @@ export class User
                                                 users.forEach(user =>
                                                     {
                                                         
-                                                        console.log(user.imageUrl);
+                                                    console.log(user.imageUrl);
                                                     let newUser = new User(user.id,user.jmbg,user.name, user.lastName, user.dateBirth, user.url,user.gender, user.age, user.critic, user.count);
                                                     //(id, jmbg,name, lastName, dateBirth, imageUrl, gender, age, critic, count)
                                                     const parentUser=this.containerUser.parentElement;
@@ -636,7 +636,7 @@ export class User
                 
                         var oneFilled=document.createElement("div");
                         oneFilled.className="filled";
-                        oneFilled.innerHTML=precent+"%";
+                        oneFilled.innerHTML=precent.toFixed(2)+"%";
                         oneFilled.style.setProperty("--d",precent+"%");
                         one.appendChild(oneFilled);
                         
@@ -650,7 +650,7 @@ export class User
                 
                         var twoFilled=document.createElement("div");
                         twoFilled.className="filled";
-                        twoFilled.innerHTML=precent+"%";
+                        twoFilled.innerHTML=precent.toFixed(2)+"%";
                         twoFilled.style.setProperty("--d",precent+"%");
                         two.appendChild(twoFilled);
                 
@@ -664,7 +664,7 @@ export class User
                 
                         var threeFilled=document.createElement("div");
                         threeFilled.className="filled";
-                        threeFilled.innerHTML=precent+"%";
+                        threeFilled.innerHTML=precent.toFixed(2)+"%";
                         threeFilled.style.setProperty("--d",precent+"%");
                         three.appendChild(threeFilled);
                 
@@ -678,7 +678,7 @@ export class User
                 
                         var fourFilled=document.createElement("div");
                         fourFilled.className="filled";
-                        fourFilled.innerHTML=precent+"%";
+                        fourFilled.innerHTML=precent.toFixed(2)+"%";
                         fourFilled.style.setProperty("--d",precent+"%");
                         four.appendChild(fourFilled);
                 
@@ -692,7 +692,7 @@ export class User
                 
                         var fiveFilled=document.createElement("div");
                         fiveFilled.className="filled";
-                        fiveFilled.innerHTML=precent+"%";
+                        fiveFilled.innerHTML=precent.toFixed(2)+"%";
                         fiveFilled.style.setProperty("--d",precent+"%");
                         five.appendChild(fiveFilled);
                     });

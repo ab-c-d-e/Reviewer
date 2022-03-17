@@ -64,6 +64,11 @@ input[type=file]::file-selector-button:hover{
 
 }
 
+.imageObject{
+    height: 200px;
+    width: 150px;
+}
+
 .fromForAdding input{
     margin: 10px;
     font-size: 15px;

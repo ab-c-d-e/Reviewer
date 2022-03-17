@@ -149,6 +149,7 @@ export class Object
         {
             localStorage.setItem("objectsType","authors")
             localStorage.setItem("objects",this.author.id);
+            localStorage.setItem("authorTitle",this.author.name+" "+this.author.lastName);
             window.open("objects.html", '_self');
         }
         divAuthor.appendChild(imageAuthor);
@@ -580,7 +581,6 @@ export class Object
     {
         host.innerHTML="";
         var listIDGenras=[];
-        console.log(this.listGenre);
         var id=localStorage.getItem("idReviewer"); 
         fetch("https://localhost:5001/Genre/GetAllGenres/"+ id,
         {method: "GET"})

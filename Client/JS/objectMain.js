@@ -36,6 +36,7 @@ var gradeReview=document.createElement("input");
 gradeReview.type="number";
 gradeReview.min=1;
 gradeReview.max=5;
+gradeReview.value="1";
 gradeReview.className="gradeReview";
 addReviewRight.appendChild(gradeReview);
 
@@ -104,6 +105,12 @@ divSearch.appendChild(radioSearch);
 var dropDownUsers=document.createElement("select");
 dropDownUsers.className="dropDownUsers";
 addReviewRight.appendChild(dropDownUsers);
+
+var optionTitle=document.createElement("option");
+optionTitle.selected="true";
+optionTitle.disabled="true";
+optionTitle.innerHTML="Choose User...";
+dropDownUsers.appendChild(optionTitle);
 
 radioCritics.onchange=(ev)=>
 {

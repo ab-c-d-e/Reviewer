@@ -41,16 +41,39 @@ export class Genre
 
     filterObject(host, heroObjects)
     {
+        if(!host)
+        {
+            throw new Error("Parent Element Does Not Exist!");
+        }
+        const divNavigation=document.createElement("div");
+        divNavigation.className="divNavigation";
+        host.appendChild(divNavigation);
+
+        let buttonHome=document.createElement("button");
+        buttonHome.innerHTML="BACK";
+        buttonHome.className="buttonHome";
+        divNavigation.appendChild(buttonHome);
+
+        buttonHome.onclick=(ev)=>{
+            window.open("reviewer.html", '_self');
+        }
+
+        let buttonUsers=document.createElement("button");
+        buttonUsers.innerHTML="USERS";
+        buttonUsers.className="buttonUsers";
+        divNavigation.appendChild(buttonUsers);
+
+        buttonUsers.onclick=(ev)=>{
+            window.open("usersMain.html", '_self');
+        }
+
         var name=localStorage.getItem("genreTitle");
         console.log(name);
         var titleGenre=document.createElement("h3");
         titleGenre.className="titleGenre";
         titleGenre.innerHTML=name;
         host.appendChild(titleGenre);
-        if(!host)
-        {
-            throw new Error("Parent Element Does Not Exist!");
-        }
+
         var selectSort=document.createElement("select");
         selectSort.name="selectReviewSort";
         selectSort.className="selectReviewSort";
@@ -175,5 +198,5 @@ export class Genre
         optionLargerst.value="largest";
         optionLargerst.innerHTML="Grade ⬇";
         selectSort.appendChild(optionLargerst);
-}
+    }
 }
